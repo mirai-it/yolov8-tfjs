@@ -23,7 +23,7 @@ const preprocess = (source, modelWidth, modelHeight) => {
     const imgPadded = img.pad([
       [0, maxSize - h], // padding y [bottom only]
       [0, maxSize - w], // padding x [right only]
-      [0, 0],
+      [0, 0]
     ]);
 
     xRatio = maxSize / w; // update xRatio
@@ -45,7 +45,7 @@ const preprocess = (source, modelWidth, modelHeight) => {
  * @param {HTMLCanvasElement} canvasRef canvas reference
  * @param {VoidFunction} callback function to run after detection process
  */
-export const detect = async (source, model, canvasRef, callback = () => {}) => {
+export const detect = async (source, model, canvasRef, callback = () => { }) => {
   const [modelWidth, modelHeight] = model.inputShape.slice(1, 3); // get model width and height
 
   tf.engine().startScope(); // start scoping tf engine
@@ -64,7 +64,7 @@ export const detect = async (source, model, canvasRef, callback = () => {}) => {
           y1,
           x1,
           tf.add(y1, h), //y2
-          tf.add(x1, w), //x2
+          tf.add(x1, w) //x2
         ],
         2
       )
@@ -77,13 +77,35 @@ export const detect = async (source, model, canvasRef, callback = () => {}) => {
     return [rawScores.max(1), rawScores.argMax(1)];
   }); // get max scores and classes index
 
-  const nms = await tf.image.nonMaxSuppressionAsync(boxes, scores, 500, 0.45, 0.2); // NMS to filter boxes
+  const nms = await tf.image.nonMaxSuppressionAsync(
+    boxes,
+    scores,
+    500,
+    0.45,
+    0.2
+  ); // NMS to filter boxes
 
   const boxes_data = boxes.gather(nms, 0).dataSync(); // indexing boxes by nms index
   const scores_data = scores.gather(nms, 0).dataSync(); // indexing scores by nms index
   const classes_data = classes.gather(nms, 0).dataSync(); // indexing classes by nms index
 
-  renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [xRatio, yRatio]); // render boxes
+  let personCount = 0;
+  for (let i = 0; i < scores_data.length; i++) {
+    const className = labels[classes_data[i]];
+    const score = (scores_data[i] * 100).toFixed(2);
+    console.log(`${className}: ${score}%`);
+
+    // personが検出されたらカウントを増やす
+    if (className === "person") {
+      personCount++;
+    }
+  }
+  window.localStorage.setItem("person_count_v1", personCount);
+
+  renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [
+    xRatio,
+    yRatio
+  ]); // render boxes
   tf.dispose([res, transRes, boxes, scores, classes, nms]); // clear memory
 
   callback();
