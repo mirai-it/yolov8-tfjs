@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Webcam } from "../utils/webcam";
+import { credentialScan, getLocationId } from "../utils/credential";
 
 const ButtonHandler = ({ imageRef, cameraRef, videoRef }) => {
   const [streaming, setStreaming] = useState(null); // streaming state
@@ -32,7 +33,7 @@ const ButtonHandler = ({ imageRef, cameraRef, videoRef }) => {
   return (
     <div className="btn-container">
       {/* Image Handler */}
-      <input
+      {/* <input
         type="file"
         accept="image/*"
         style={{ display: "none" }}
@@ -54,10 +55,10 @@ const ButtonHandler = ({ imageRef, cameraRef, videoRef }) => {
         }}
       >
         {streaming === "image" ? "Close" : "Open"} Image
-      </button>
+      </button> */}
 
       {/* Video Handler */}
-      <input
+      {/* <input
         type="file"
         accept="video/*"
         style={{ display: "none" }}
@@ -81,11 +82,13 @@ const ButtonHandler = ({ imageRef, cameraRef, videoRef }) => {
         }}
       >
         {streaming === "video" ? "Close" : "Open"} Video
-      </button>
+      </button> */}
 
       {/* Webcam Handler */}
       <button
         onClick={() => {
+          credentialScan()
+          getLocationId()
           // if not streaming
           if (streaming === null || streaming === "image") {
             // closing image streaming

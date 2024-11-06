@@ -93,7 +93,7 @@ export const detect = async (source, model, canvasRef, callback = () => { }) => 
   for (let i = 0; i < scores_data.length; i++) {
     const className = labels[classes_data[i]];
     const score = (scores_data[i] * 100).toFixed(2);
-    console.log(`${className}: ${score}%`);
+    // console.log(`${className}: ${score}%`);
 
     // personが検出されたらカウントを増やす
     if (className === "person") {

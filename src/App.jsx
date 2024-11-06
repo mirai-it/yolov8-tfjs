@@ -5,6 +5,8 @@ import Loader from "./components/loader";
 import ButtonHandler from "./components/btn-handler";
 import { detect, detectVideo } from "./utils/detect";
 import "./style/App.css";
+import "./utils/uploadLog"
+import { setLocationId } from "./utils/credential";
 
 const App = () => {
   const [loading, setLoading] = useState({ loading: true, progress: 0 }); // loading state
@@ -51,10 +53,7 @@ const App = () => {
     <div className="App">
       {loading.loading && <Loader>Loading model... {(loading.progress * 100).toFixed(2)}%</Loader>}
       <div className="header">
-        <h1>📷 YOLOv8 Live Detection App</h1>
-        <p>
-          YOLOv8 live detection application on browser powered by <code>tensorflow.js</code>
-        </p>
+        <h1>📷➡️🖥️🔍👤💨🚨</h1>
         <p>
           Serving : <code className="code">{modelName}</code>
         </p>
@@ -82,6 +81,10 @@ const App = () => {
       </div>
 
       <ButtonHandler imageRef={imageRef} cameraRef={cameraRef} videoRef={videoRef} />
+      <button onClick={()=>{
+        setLocationId(window.prompt("新しいロケーションIDを入れてください",0));
+      }}>ローケーションIDリセット</button>
+      <p>1ef5aaea-c75d-6ef0-ae7d-95aeb3c1f35e</p>
     </div>
   );
 };
