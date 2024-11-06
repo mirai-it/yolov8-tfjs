@@ -11,9 +11,10 @@ export class Webcam {
       navigator.mediaDevices
         .getUserMedia({
           audio: false,
-          video: {
-            facingMode: "environment",
-          },
+          video: true
+          //  {
+          // facingMode: "environment",
+          // },
         })
         .then((stream) => {
           videoRef.srcObject = stream;
