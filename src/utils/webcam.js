@@ -23,8 +23,7 @@ export class Webcam {
             // フロントカメラを使用
             constraints = {
               audio: false,
-              video: { facingMode: { exact: "environment" }, }
-
+              video: { facingMode: 'user' }
             };
           } else if (cameraIndex >= 0 && cameraIndex < videoDevices.length) {
             // 指定されたインデックスのカメラを使用
