@@ -8,18 +8,46 @@ export class Webcam {
    */
   open = (videoRef) => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: false,
-          video: true
-          //  {
-          // facingMode: "environment",
-          // },
+      // URLパラメータからカメラインデックスを取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const cameraParam = urlParams.get('camera');
+      const cameraIndex = cameraParam !== null ? parseInt(cameraParam) : -1;
+
+      // 利用可能なビデオデバイスを取得
+      navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+          const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+          let constraints;
+          if (cameraIndex === -1) {
+            // フロントカメラを使用
+            constraints = {
+              audio: false,
+              video: { facingMode: 'user' }
+            };
+          } else if (cameraIndex >= 0 && cameraIndex < videoDevices.length) {
+            // 指定されたインデックスのカメラを使用
+            constraints = {
+              audio: false,
+              video: { deviceId: { exact: videoDevices[cameraIndex].deviceId } }
+            };
+          } else {
+            throw new Error('Invalid camera index');
+          }
+
+          // 選択されたカメラでgetUserMediaを呼び出す
+          return navigator.mediaDevices.getUserMedia(constraints);
         })
-        .then((stream) => {
+        .then(stream => {
           videoRef.srcObject = stream;
+        })
+        .catch(error => {
+          console.error('Error accessing the camera:', error);
+          alert("Can't open Webcam: " + error.message);
         });
-    } else alert("Can't open Webcam!");
+    } else {
+      alert("Can't open Webcam!");
+    }
   };
 
   /**
